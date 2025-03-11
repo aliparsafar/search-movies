@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
@@ -21,22 +20,21 @@ const fetchMovies = async (searchTerm: string) => {
   return data.Search || [];
 };
 
-const SearchMovies = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const searchTerm = searchParams.get("query") || "";
-    const inputRef = useRef<HTMLInputElement>(null);
-  
-    const { data: movies, isLoading, isError } = useQuery({
-      queryKey: ["movies", searchTerm],
-      queryFn: () => fetchMovies(searchTerm),
-      enabled: !!searchTerm,
-    });
-  
-    const handleSearch = () => {
-      if (inputRef.current) {
-        setSearchParams({ query: inputRef.current.value });
-      }
-    };
+    const SearchMovies = () => {
+        const [searchTerm, setSearchTerm] = useState("");
+        const inputRef = useRef<HTMLInputElement>(null);
+    
+        const { data: movies, isLoading, isError } = useQuery({
+        queryKey: ["movies", searchTerm],
+        queryFn: () => fetchMovies(searchTerm),
+        enabled: !!searchTerm,
+        });
+    
+        const handleSearch = () => {
+            if (inputRef.current) {
+              setSearchTerm(inputRef.current.value); 
+            }
+          };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center p-6 rounded-xl">
